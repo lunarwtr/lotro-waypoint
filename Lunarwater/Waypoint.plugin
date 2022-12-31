@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<Plugin>
+	<Information>
+		<Name>Waypoint</Name>
+		<Author>Lunarwater</Author>
+		<Version>1.9</Version>
+		<Description>Waypoint plugin directs you to set of coordinates with an arrow.</Description>
+		<Image>Lunarwater/Waypoint/logo.jpg</Image>
+	</Information>
+	<Package>Lunarwater.Waypoint.Main</Package>
+	<Configuration Apartment="Waypoint" />
+</Plugin>
