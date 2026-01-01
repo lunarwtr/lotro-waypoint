@@ -13,8 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ]]
+import "Lunarwater.Waypoint.Globals";
 import "Lunarwater.Waypoint.Class";
 import "Lunarwater.Waypoint.PluginData";
 import "Lunarwater.Waypoint.Arrow";
 import "Lunarwater.Waypoint.Settings";
 import "Lunarwater.Waypoint.Waypoint";
+import "Lunarwater.Waypoint.Options";

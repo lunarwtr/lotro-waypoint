@@ -19,56 +19,44 @@ import "Turbine.UI";
 import "Turbine.UI.Lotro";
 import "Lunarwater.Waypoint";
 
-local locale = "en";
-if Turbine.Shell.IsCommand("hilfe") then
-  locale = "de";
-elseif Turbine.Shell.IsCommand("aide") then
-  locale = "fr";
-end
-
 Arrow = class( Turbine.UI.Window );
 function Arrow:Constructor()
-    Turbine.UI.Window.Constructor( self );
-	
-   	local invisible = Turbine.UI.Color(0,0,0,0);
-    self:SetSize(75,75);
-    self:SetVisible( false );
-    self:SetMouseVisible(false);
-    self:SetBackColor(invisible);
-    
-    local aliascommand = '/loc';
-    if locale == 'de' then 
-    	aliascommand = '/pos' 
-    elseif locale == 'fr' then
-    	aliascommand = '/emp' 
-    end;
-    local sc = Turbine.UI.Lotro.Shortcut( Turbine.UI.Lotro.ShortcutType.Alias, '' );
-    sc:SetData(aliascommand);
-	local quick = Turbine.UI.Lotro.Quickslot();
-	quick:SetParent(self);
-    quick:SetSize( 18, 18 );
- 	quick:SetAllowDrop(false);    
-    local offset = (self:GetWidth() - quick:GetWidth()) / 2;
-    quick:SetPosition(offset,offset);
-    quick:SetShortcut(sc);
-    quick:SetVisible(true);    
-	self.quick = quick;
-	
+  Turbine.UI.Window.Constructor( self );
+
+  local invisible = Turbine.UI.Color(0,0,0,0);
+  self:SetSize(75,75);
+  self:SetVisible( false );
+  self:SetMouseVisible(false);
+  self:SetBackColor(invisible);
+
+  local aliascommand = STRING.COMMAND_LOC;
+  local sc = Turbine.UI.Lotro.Shortcut( Turbine.UI.Lotro.ShortcutType.Alias, '' );
+  sc:SetData(aliascommand);
+  local quick = Turbine.UI.Lotro.Quickslot();
+  quick:SetParent(self);
+  quick:SetSize( 18, 18 );
+  quick:SetAllowDrop(false);
+  local offset = (self:GetWidth() - quick:GetWidth()) / 2;
+  quick:SetPosition(offset,offset);
+  quick:SetShortcut(sc);
+  quick:SetVisible(true);
+  self.quick = quick;
+
 	self.quick.alias=aliascommand;
 	self.quick.DragDrop=function()
 		local sc = Turbine.UI.Lotro.Shortcut( Turbine.UI.Lotro.ShortcutType.Alias, '' );
 		sc:SetData(self.quick.alias);
 		self.quick:SetShortcut(sc);
-	end	
-    	
-    local arrow = Turbine.UI.Control();
-    arrow:SetParent(self);
-    arrow:SetPosition(0,0);
-    arrow:SetSize(75,75);
-    arrow:SetBlendMode( Turbine.UI.BlendMode.AlphaBlend );
-    arrow:SetBackground("Lunarwater/Waypoint/arrowunknown.tga");
-    arrow:SetMouseVisible(false);
-    self.arrow = arrow;
+	end
+
+  local arrow = Turbine.UI.Control();
+  arrow:SetParent(self);
+  arrow:SetPosition(0,0);
+  arrow:SetSize(75,75);
+  arrow:SetBlendMode( Turbine.UI.BlendMode.AlphaBlend );
+  arrow:SetBackground("Lunarwater/Waypoint/arrowunknown.tga");
+  arrow:SetMouseVisible(false);
+  self.arrow = arrow;
 
 end
 

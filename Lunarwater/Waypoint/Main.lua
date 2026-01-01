@@ -15,12 +15,12 @@
 ]]
 import "Lunarwater.Waypoint";
 local waypoint = Waypoint();
-Turbine.Shell.WriteLine("<rgb=#008080>Waypoint</rgb> " .. Plugins.Waypoint:GetVersion() .. " by <rgb=#FF80FF>Lunarwater</rgb>");
-			 
+Turbine.Shell.WriteLine(string.format(STRING.AUTHOR_LINE, "<rgb=#008080>Waypoint</rgb> " .. Plugins.Waypoint:GetVersion() .. "(" .. LOCALE .. ")", "<rgb=#FF80FF>Lunarwater</rgb>"));
+
 WaypointCommand = Turbine.ShellCommand();
 
 function WaypointCommand:Execute( command, arguments )
-    waypoint:ProcessCommandArguments(arguments);    
+    waypoint:ProcessCommandArguments(arguments);
 end
 
 function WaypointCommand:GetHelp()

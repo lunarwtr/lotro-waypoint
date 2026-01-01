@@ -28,12 +28,14 @@ function SettingsClass:LoadSettings()
 	local settings = Lunarwater.Waypoint.PluginData.Load( Turbine.DataScope.Account , "WaypointSettings")
 	if settings == nil then
 		self.settings = { 
+			Distance = 10,
 			WindowPos = {  
 				["left"] = tostring((Turbine.UI.Display.GetWidth() / 2) - 75.5),
 				["top"] =  tostring((Turbine.UI.Display.GetHeight() / 2) - 150)
 			}
 		};
 	else
+		if settings.Distance == nil then settings.Distance = 10 end
 		self.settings = settings;
 	end
 end

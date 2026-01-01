@@ -17,17 +17,10 @@ import "Turbine";
 import "Turbine.Gameplay";
 import "Turbine.UI";
 import "Turbine.UI.Lotro";
-
 import "Lunarwater.Waypoint";
 
-local locale = "en";
-if Turbine.Shell.IsCommand("hilfe") then
-  locale = "de";
-elseif Turbine.Shell.IsCommand("aide") then
-  locale = "fr";
-end
 
-local LOC_MESSAGES = { 
+local LOC_MESSAGES = {
 	'r(%d+) lx(%d+%.?%d*) ly(%d+%.?%d*) i%d+ ox(%d+%.?%d*) oy(%d+%.?%d*) oz(%d+%.?%d*) h(%d+%.?%d*)',
 	'r(%d+) lx(%d+%.?%d*) ly(%d+%.?%d*) i%d+ cInside ox(.-%d+%.?%d*) oy(.-%d+%.?%d*) oz(.-%d+%.?%d*) h(%d+%.?%d*)',
 	'r(%d+) lx(%d+%.?%d*) ly(%d+%.?%d*) i%d+ ox(%d+%.?%d*) oy(%d+%.?%d*) oz(%d+%.?%d*)',
@@ -43,17 +36,17 @@ local LOC_MESSAGES = {
 if (tonumber("1,000")==1) then
 	function tonum(val)
 		if val~=nil then
-			return tonumber((string.gsub(val,"%.",",")))        
+			return tonumber((string.gsub(val,"%.",",")))
 	    end
         return nil;
 	end
 else
 	function tonum(val)
 		if val~=nil then
-			return tonumber((string.gsub(val,",",".")))        
+			return tonumber((string.gsub(val,",",".")))
 	    end
         return nil;
-	end    
+	end
 end
 
 function round(num, idp)
@@ -75,7 +68,7 @@ function Waypoint:Constructor()
     self:SetBackColor(invisible);
     self:SetMouseVisible(false);
 	self:SetZOrder(150);
-	
+
     local arrow = Lunarwater.Waypoint.Arrow();
     local offset = math.floor(self:GetWidth() / 4);
     arrow:SetPosition(self:GetLeft() + offset,self:GetTop() + offset);
@@ -83,7 +76,7 @@ function Waypoint:Constructor()
 	arrow.ShortcutMoved = function(left, top)
 		self:SetPosition(left - offset, top - offset);
 	end
-	
+
 	local color = Turbine.UI.Color(1,.9,.5);
  	local messageLabel = Turbine.UI.Label();
  	messageLabel:SetParent(self);
@@ -95,36 +88,37 @@ function Waypoint:Constructor()
     messageLabel:SetTextAlignment( Turbine.UI.ContentAlignment.MiddleCenter );
 	messageLabel:SetMouseVisible(false);
 	messageLabel:SetText('Target needed');
-	
+
  	local rangeLabel = Turbine.UI.Label();
  	rangeLabel:SetParent(self);
- 	rangeLabel:SetSize(self:GetWidth(),15);
- 	rangeLabel:SetPosition(0,messageLabel:GetTop() + rangeLabel:GetHeight());
+ 	rangeLabel:SetSize(150,35);
+ 	rangeLabel:SetPosition(0, messageLabel:GetTop() + messageLabel:GetHeight());
+	-- rangeLabel:SetBackColor(Turbine.UI.Color.Black);
  	rangeLabel:SetFont(Turbine.UI.Lotro.Font.TrajanPro14);
  	rangeLabel:SetForeColor(color);
 	rangeLabel:SetFontStyle(Turbine.UI.FontStyle.Outline);
-    rangeLabel:SetTextAlignment( Turbine.UI.ContentAlignment.MiddleCenter );
+    rangeLabel:SetTextAlignment( Turbine.UI.ContentAlignment.TopCenter);
  	rangeLabel:SetMouseVisible(false);
-	
+
  	self.arrow = arrow;
  	self.messageLabel = messageLabel;
  	self.rangeLabel = rangeLabel;
-	
+
  	local mover = Turbine.UI.Control();
 	mover:SetParent(self);
     mover:SetBlendMode( Turbine.UI.BlendMode.None );
-    mover:SetBackground("Lunarwater/Waypoint/move.tga");		
+    mover:SetBackground("Lunarwater/Waypoint/move.tga");
 	mover:SetSize(15,15);
 	mover:SetPosition(45,45);
-	mover:SetZOrder(arrow:GetZOrder() + 1);	
+	mover:SetZOrder(arrow:GetZOrder() + 1);
 	mover:SetMouseVisible(true);
 	mover.MouseEnter = function()
 	    mover:SetBlendMode( Turbine.UI.BlendMode.AlphaBlend );
 	end
 	mover.MouseLeave = function()
     	mover:SetBlendMode( Turbine.UI.BlendMode.None );
-	end	
-  	
+	end
+
     mover.MouseDown = function( sender, args )
         if(args.Button == Turbine.UI.MouseButton.Left) then
             sender.dragStartX = args.X;
@@ -148,25 +142,25 @@ function Waypoint:Constructor()
             local aleft, atop = self.arrow:GetPosition();
             self:SetPosition( left + ( args.X - sender.dragStartX ), top + args.Y - sender.dragStartY );
             self.arrow:SetPosition( aleft + ( args.X - sender.dragStartX ), atop + args.Y - sender.dragStartY );
-            
+
             sender.dragged = true;
         end
-    end	
+    end
 
  	local closer = Turbine.UI.Control();
 	closer:SetParent(self);
     closer:SetBlendMode( Turbine.UI.BlendMode.None );
-    closer:SetBackground("Lunarwater/Waypoint/close.tga");		
+    closer:SetBackground("Lunarwater/Waypoint/close.tga");
 	closer:SetSize(15,15);
 	closer:SetPosition(85,45);
-	closer:SetZOrder(arrow:GetZOrder() + 1);	
+	closer:SetZOrder(arrow:GetZOrder() + 1);
 	closer:SetMouseVisible(true);
 	closer.MouseEnter = function()
 	    closer:SetBlendMode( Turbine.UI.BlendMode.AlphaBlend );
 	end
 	closer.MouseLeave = function()
     	closer:SetBlendMode( Turbine.UI.BlendMode.None );
-	end	
+	end
 	closer.MouseUp = function( sender, args )
         if(args.Button == Turbine.UI.MouseButton.Left) then
             self:SetVisible(false);
@@ -174,16 +168,16 @@ function Waypoint:Constructor()
     end
 
     self:SetVisible( false );
-	
+
     self:SetWantsKeyEvents( true );
     self.KeyDown = function( sender, args )
         if ( args.Action == 268435635 ) then
         	if self:IsVisible() then
 				Turbine.UI.Window.SetVisible(self, false);
-				self.arrow:SetVisible(false); 
+				self.arrow:SetVisible(false);
         	else
-        		if self.currentCoor ~= nil then 
-					self:SetVisible(true); 
+        		if self.currentCoor ~= nil then
+					self:SetVisible(true);
 					self:UpdateArrow();
 				end
         	end
@@ -197,21 +191,25 @@ function Waypoint:Constructor()
 	       	   local coor = self:ConvertToPlayer(loc);
 	       	   self.currentLoc = loc;
 	       	   self.currentCoor = coor;
-			   self:UpdateArrow();	       	   
+			   self:UpdateArrow();
 	       end
        end
     end
 
+	self.options = Lunarwater.Waypoint.Options();
+	Plugins.Waypoint.GetOptionsPanel = function()
+		return self.options
+	end
 end
 
 function Waypoint:Reset()
 	self.currentCoor = nil;
 	self.currentLoc = nil;
 	self.arrow:ShowUnknown();
-	self.arrow:SetRotation( { x = 0, y = 0, z = 0 } );		
-	self.messageLabel:SetText('Target needed');
+	self.arrow:SetRotation( { x = 0, y = 0, z = 0 } );
+	self.messageLabel:SetText(STRING.TARGET_NEEDED);
 	self.rangeLabel:SetText("");
-	self:SetWantsUpdates(false);	
+	self:SetWantsUpdates(false);
 end
 
 function Waypoint:Update( sender, args )
@@ -239,7 +237,7 @@ function Waypoint:SetTargetCoordinate( coor )
 	self.currentCoor = nil;
 	self.currentLoc = nil;
 	self.arrow:ShowRefresh();
-	self.arrow:SetRotation( { x = 0, y = 0, z = 0 } );		
+	self.arrow:SetRotation( { x = 0, y = 0, z = 0 } );
 	self.messageLabel:SetText(self:CoordinateToString(coor));
 	self.rangeLabel:SetText("");
 	self:SetVisible(true);
@@ -247,35 +245,36 @@ function Waypoint:SetTargetCoordinate( coor )
 end
 
 function Waypoint:CoordinateToString( coor )
-   	
+
    	local yd = 'N';
    	if coor.y < 0 then yd = 'S' end;
    	local xd = 'E';
    	if coor.x < 0 then xd = 'W' end;
-   	
-   	if locale == 'de' and xd == 'E' then
+
+   	if LOCALE == 'de' and xd == 'E' then
    		xd = 'O';
    	end;
-   	
-   	return math.abs(coor.y) .. yd  .. ', ' .. math.abs(coor.x) .. xd;
+	local str = math.abs(coor.y) .. yd  .. ', ' .. math.abs(coor.x) .. xd;
+	return str;
 end
 
 function Waypoint:UpdateArrow()
 	if self.targetCoor ~= nil and self.currentCoor ~= nil then
 		-- local angle = math.atan2(self.currentCoor.y - self.targetCoor.y, self.currentCoor.x - self.targetCoor.x) * 270 / math.pi
-		local x1 = round(self.currentCoor.x, 1); local x2 = round(self.targetCoor.x, 1);
-		local y1 = round(self.currentCoor.y, 1); local y2 = round(self.targetCoor.y, 1);
-		
+		local roundTo = self.targetCoor.sig_digits > 1 and 2 or 1;
+		local x1 = round(self.currentCoor.x, roundTo); local x2 = round(self.targetCoor.x, roundTo);
+		local y1 = round(self.currentCoor.y, roundTo); local y2 = round(self.targetCoor.y, roundTo);
+
 		if x1 == x2 and y1 == y2 then
-			self.rangeLabel:SetText("Arrived @ " .. self:CoordinateToString(self.targetCoor));	
+			self.rangeLabel:SetText(string.format(STRING.ARRIVED_AT, self:CoordinateToString(self.targetCoor)));
 			self.arrow:ShowFinished();
 			self.arrow:SetRotation( { x = 0, y = 0, z = 0 } );
-			self:SetWantsUpdates( false );	
+			self:SetWantsUpdates( false );
 		else
 			-- turn on refresh timer
 			self.refreshStartTime = Turbine.Engine.GetGameTime();
 			self:SetWantsUpdates( true );
-			
+
 			local angle;
 			if x2 == x1 then
 				if y2 < y1 then angle = 180 else angle = 360 end
@@ -294,22 +293,23 @@ function Waypoint:UpdateArrow()
 				-- top right
 				angle = 90 - math.deg(math.atan((y2 - y1)/(x2 - x1)));
 			end
-			
+
 			local arrowAngle = 0;
-			if self.currentLoc.h > angle then 
-				arrowAngle = math.floor(self.currentLoc.h - angle); 
+			if self.currentLoc.h > angle then
+				arrowAngle = math.floor(self.currentLoc.h - angle);
 			else
-				arrowAngle = math.floor(360 - (angle - self.currentLoc.h)); 
+				arrowAngle = math.floor(360 - (angle - self.currentLoc.h));
 			end
 			-- Turbine.Shell.WriteLine('from ' .. self:CoordinateToString(self.currentCoor) .. ' to ' .. self:CoordinateToString(self.targetCoor).. ' => ' ..tostring(angle) .. ' | ' .. tostring(arrowAngle));
-			
-			local distance = math.sqrt( ( self.currentCoor.x - self.targetCoor.x )^2 + ( self.currentCoor.y - self.targetCoor.y )^2 ) * 202.2171;
-			if distance > 30 then
-				self.rangeLabel:SetText('~' .. tostring(round(distance,1)) .. 'm away');
+
+			local distance = math.sqrt( ( self.currentCoor.x - self.targetCoor.x )^2 + ( self.currentCoor.y - self.targetCoor.y )^2 ) * 200;
+			local completionDistance = Lunarwater.Waypoint.Settings:GetSetting('Distance') or DEFAULT_COMPLETION_DISTANCE;
+			if distance > completionDistance then
+				self.rangeLabel:SetText(string.format(STRING.DISTANCE_AWAY, tostring(round(distance,1))));
 			else
-				self.rangeLabel:SetText('within 30m');
-			end	
-	
+				self.rangeLabel:SetText(string.format(STRING.DISTANCE_WITHIN, completionDistance));
+			end
+
 			self.arrow:ShowArrow();
 			self.arrow:SetRotation( { x = 0, y = 0, z = arrowAngle } );
 		end
@@ -320,28 +320,42 @@ function Waypoint:ParseCoordinate( message )
 	local y, yd = message:match "(%d+%.?%d*)([NSns])";
 	local x, xd = message:match "(%d+%.?%d*)([EWOewo])";
 	if y ~= nil and x ~= nil then
+		local function count_decimals(val)
+			local _, dec = tostring(val):match("^(%-?%d*)%.(%d*)$")
+			return dec and #dec or 0
+		end
+		local x_dec = count_decimals(x)
+		local y_dec = count_decimals(y)
+		local sig_digits = math.max(x_dec, y_dec)
 		x = tonum(x);
 		y = tonum(y);
-		if xd == 'W' or xd == 'w' or (locale == 'de' and ( xd == 'o' or xd == 'O' )) then
+		if xd == 'W' or xd == 'w' or (LOCALE == 'de' and ( xd == 'o' or xd == 'O' )) then
 			x = - x;
 		end
 		if yd == 'S' or yd == 's' then
 			y = - y;
 		end
 		--Turbine.Shell.WriteLine('x: ' .. x .. ' y: ' .. y);
-		return { x = x, y = y }
+		return { x = x, y = y, sig_digits = sig_digits }
 	end
 end
 
+--You are on server 65 at r2 lx1212 ly1538 ox85.67 oy49.68 oz711.87 h180.0. Game timestamp 413530581.868.
+--You are on Landroval server 54 at r1 lx956 ly939 ox87.20 oy64.15 oz408.09 h60.5. Game timestamp 418155353.194.
+
+--Ihr seid auf dem Server "Landroval" (61) in r2 lx789 ly653 i59 ox114.27 oy110.14 oz216.05 h291.1. Spiel-Zeitstempel 418163081.150.
+
+--Vous vous trouvez sur Landroval, serveur 15,   r2 lx773 ly665 i7 ox102.73 oy34.26 oz302.48. Horodatage du jeu 418161754.100.
+-- not sure why they doubled up the "vous", "Vous vous" looks like a typo, so use ".*ous" to match it in case they ever change it
+
+--Ваше местонахождение: Brandywine, сервер: 34. Время в игре: r1 lx462 ly1050 ox138.38 oy49.44 oz544.43 h236.3.
+--Ваше местонахождение сервер: Brandywine 44 в r1 lx803 ly965 ox78.05 oy116.85 oz379.27 h201.1. Время в игре: 545883937.167.
+--Ваше местонахождение: Brandywine, сервер 23, r1 lx560 ly985 i73 ox18.06 oy20.90 oz376.76 h56.2. Время в игре: 548425960.316.
+
 function Waypoint:ParseChatLocation( message )
-	local matchprefix = 'You are on .+ server %d* at ';
-	if locale == 'de' then
-		matchprefix = 'Ihr seid auf dem Server .+ in ';		
-	elseif locale == 'fr' then
-		matchprefix = 'Vous vous trouvez sur .+ serveur %d*, à ';
-	end
+	local matchprefix = STRING.PATTERN_CHAT_LOC;
 	for i, suffix in ipairs(LOC_MESSAGES) do
-		local matchstring = matchprefix .. suffix; 
+		local matchstring = matchprefix .. suffix;
 		local r, lx, ly, ox, oy, oz, h = message:match(matchstring);
 		if r ~= nil then
 			if h == nil then h = 0 end;
@@ -352,24 +366,26 @@ end
 
 function Waypoint:ConvertToPlayer( dev_coordinate )
 	-- You are at: r1 lx904 ly975 ox18.49 oy142.90 oz418.52 h140.6
- 	-- You are at: r1 lx1046 ly1147 ox129.00 oy75.72 oz417.78 h358.6 
+ 	-- You are at: r1 lx1046 ly1147 ox129.00 oy75.72 oz417.78 h358.6
     -- You are at: r1 lx959 ly921 ox153.80 oy36.75 oz381.56 h199.7
 	local x = (( math.floor( dev_coordinate.lx / 8 ) * 160 + dev_coordinate.ox ) - 29360) / 200;
 	local y = (( math.floor( dev_coordinate.ly / 8 ) * 160 + dev_coordinate.oy ) - 24880) / 200;
 
 	return { x = round(x,3), y = round(y,3) };
-	
+
 end
 
 function Waypoint:ProcessCommandArguments( arg )
-	
+
 	if arg == 'hide' then
 		self:SetVisible(false);
 	elseif arg == 'show' then
 		self:SetVisible(true);
 	elseif arg == 'help' then
 		Turbine.Shell.WriteLine(self:GetHelp(true));
-	else 
+    elseif arg == 'config' then
+        Turbine.PluginManager.ShowOptions(Plugins.Waypoint);
+	else
 		local target, coord_text = arg:match "(target) (.*)";
 		if target ~= nil then
 			local coor = self:ParseCoordinate(coord_text);
@@ -380,26 +396,35 @@ function Waypoint:ProcessCommandArguments( arg )
 			Turbine.Shell.WriteLine(self:GetHelp(true));
 		end
 	end
-	
-	
 end
 
 
 function Waypoint:GetHelp(tagged)
 
+	local helpText
+		-- Author line logic reverted to user
 	if tagged then
-		return "<rgb=#008080>Waypoint</rgb> " .. Plugins.Waypoint:GetVersion() .. " by <rgb=#FF80FF>Lunarwater</rgb>\n" ..
-			 "    <rgb=#008080>/way help</rgb> : shows Waypoint help \n" ..
-			 "    <rgb=#008080>/way show</rgb> : shows Waypoint \n" ..
-			 "    <rgb=#008080>/way hide</rgb> : hides Waypoint \n" ..
-			 "    <rgb=#008080>/way target <coordinate></rgb> : target a coordinate for waypoint\n" ..
-			 "        (i.e. /way target 21.4S 45W)\n\n";
+		helpText = string.format(STRING.AUTHOR_LINE, "<rgb=#008080>Waypoint</rgb> " .. Plugins.Waypoint:GetVersion() .. "(" .. LOCALE .. ")", "<rgb=#FF80FF>Lunarwater</rgb>") .. "\n"
 	else
-		return "Waypoint " .. Plugins.Waypoint:GetVersion() .. " by Lunarwater\n" ..
-			 "    /way help : shows Waypoint help \n" ..
-			 "    /way show : shows Waypoint \n" ..
-			 "    /way hide : hides Waypoint \n" ..
-			 "    /way target <coordinate> : target a coordinate for waypoint\n" ..
-			 "        (i.e. /way target 21.4S 45W)\n\n";
-	end 
+		helpText = string.format(STRING.AUTHOR_LINE, "Waypoint " .. Plugins.Waypoint:GetVersion() .. "(" .. LOCALE .. ")", "Lunarwater") .. "\n"
+	end
+
+	if tagged then
+		helpText = helpText ..
+			"    <rgb=#008080>/way help</rgb> : " .. STRING.COMMAND_HELP .. "\n" ..
+			"    <rgb=#008080>/way show</rgb> : " .. STRING.COMMAND_SHOW .. "\n" ..
+			"    <rgb=#008080>/way hide</rgb> : " .. STRING.COMMAND_HIDE .. "\n" ..
+			"    <rgb=#008080>/way config</rgb> : " .. (STRING.COMMAND_CONFIG or "") .. "\n" ..
+			"    <rgb=#008080>/way target <coordinate></rgb> : " .. STRING.COMMAND_TARGET .. "\n" ..
+			"        (i.e. /way target 21.4S 45W)\n\n"
+	else
+		helpText = helpText ..
+			"    /way help : " .. STRING.COMMAND_HELP .. "\n" ..
+			"    /way show : " .. STRING.COMMAND_SHOW .. "\n" ..
+			"    /way hide : " .. STRING.COMMAND_HIDE .. "\n" ..
+			"    /way config : " .. (STRING.COMMAND_CONFIG or "") .. "\n" ..
+			"    /way target <coordinate> : " .. STRING.COMMAND_TARGET .. "\n" ..
+			"        (i.e. /way target 21.4S 45W)\n\n"
+	end
+	return helpText;
 end
