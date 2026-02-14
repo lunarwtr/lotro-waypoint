@@ -22,7 +22,7 @@ import "Lunarwater.Waypoint";
 Arrow = class( Turbine.UI.Window );
 function Arrow:Constructor()
   Turbine.UI.Window.Constructor( self );
-
+  self:UnregisterForGlobalScaling();
   local invisible = Turbine.UI.Color(0,0,0,0);
   self:SetSize(75,75);
   self:SetVisible( false );

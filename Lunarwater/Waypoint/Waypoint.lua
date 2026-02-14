@@ -60,6 +60,7 @@ end
 Waypoint = class( Turbine.UI.Window );
 function Waypoint:Constructor()
     Turbine.UI.Window.Constructor( self );
+	self:UnregisterForGlobalScaling();
 	local invisible = Turbine.UI.Color(0,0,0,0);
 	local pos = Lunarwater.Waypoint.Settings:GetSetting('WindowPos');
 	self:SetPosition( pos.left , pos.top );
